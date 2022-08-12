@@ -26,11 +26,10 @@ namespace Sandbox
 
                 argCount--;
             }
-
-            MikeAndShortcuts(n, shortcuts);
+            Console.WriteLine(string.Join(' ', MikeAndShortcuts2(n, shortcuts).Select(val => val.ToString()).ToArray()));
         }
 
-        private static void MikeAndShortcuts(int n, int[] shortcuts)
+        private static int[] MikeAndShortcuts(int n, int[] shortcuts)
         {
             var minCosts = new int[n];
 
@@ -76,7 +75,62 @@ namespace Sandbox
                 minCosts[i] = cost;
             }
 
-            Console.WriteLine(string.Join(' ', minCosts.Select(val => val.ToString()).ToArray()));
+            for (var i = n - 1 - 1; i > 0; --i)
+            {
+                if (minCosts[i - 1] > minCosts[i] + 1)
+                    minCosts[i - 1] = minCosts[i] + 1;
+            }
+
+            return minCosts;
+        }
+
+        private static int[] MikeAndShortcuts2(int n, int[] shortcuts)
+        {
+            var minCosts = new int[n];
+            var visited = new bool[n];
+
+            for (var i = 0; i < n; ++i)
+            {
+                minCosts[i] = int.MaxValue;
+                visited[i] = false;
+            }
+
+            minCosts[0] = 0;
+
+            for (var i = 0; i < n - 1; ++i)
+            {
+                var unvisited = UnvisitedMinimumIndex(minCosts, visited, n);
+                visited[unvisited] = true;
+
+                for (var j = 0; j < n; ++j)
+                {
+                    var minCostU2J = Math.Min(Math.Abs((unvisited +  1) - (j + 1)), shortcuts[unvisited] == j + 1 ? 1 : int.MaxValue);
+                    if (!visited[j] && minCosts[unvisited] != int.MaxValue &&
+                        minCosts[unvisited] + minCostU2J < minCosts[j])
+                    {
+                        minCosts[j] = minCosts[unvisited] + minCostU2J;
+                    }
+                }
+            }
+
+            return minCosts;
+        }
+        
+        private static int UnvisitedMinimumIndex(int[] minCosts, bool[] visited, int n)
+        {
+            var min = int.MaxValue;
+            var minIndex = -1;
+
+            for (var i = 0; i < n; ++i)
+            {
+                if (visited[i] == false && minCosts[i] <= min)
+                {
+                    min = minCosts[i];
+                    minIndex = i;
+                }
+            }
+
+            return minIndex;
         }
     }
 }
