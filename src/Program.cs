@@ -9,12 +9,28 @@ namespace Sandbox
     {
         public static void Main(string[] args)
         {
-            MikeAndShortcuts(3, new int[] { 2, 2, 3 });
-            MikeAndShortcuts(5, new int[] { 1, 2, 3, 4, 5 });
-            MikeAndShortcuts(7, new int[] { 4, 4, 4, 4, 7, 7, 7 });
+            int argCount = 2;
+            int n = -1;
+            string s;
+            int[] shortcuts = null;
+            while (argCount > 0 && ((s = Console.ReadLine()) != null))
+            {
+                if (n == -1)
+                {
+                    n = int.Parse(s);
+                }
+                else
+                {
+                    shortcuts = s.Split(' ').Select(a => int.Parse(a)).ToArray();
+                }
+
+                argCount--;
+            }
+
+            MikeAndShortcuts(n, shortcuts);
         }
 
-        private static int[] MikeAndShortcuts(int n, int[] shortcuts)
+        private static void MikeAndShortcuts(int n, int[] shortcuts)
         {
             var minCosts = new int[n];
 
@@ -60,7 +76,7 @@ namespace Sandbox
                 minCosts[i] = cost;
             }
 
-            return minCosts;
+            Console.WriteLine(string.Join(' ', minCosts.Select(val => val.ToString()).ToArray()));
         }
     }
 }
